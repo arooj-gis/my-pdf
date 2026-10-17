@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arooj Fatima | WebGIS Lab 2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg1:#e8f3ff; --bg2:#ffffff; --surface:#ffffffcc; --solid:#ffffff;
+  --ink:#0f2a43; --muted:#5a7186; --line:#d4e4f4;
+  --blue:#2f8fe8; --blue-d:#1566b8; --blue-l:#dcecfb; --ok:#1f9d6b;
+  --shadow:0 10px 30px rgba(31,100,170,.12);
+  --display:'Fraunces',Georgia,'Times New Roman',serif;
+  --body:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg1:#0b1b2c; --bg2:#10263b; --surface:#12293fcc; --solid:#12293f;
+    --ink:#e6f1fb; --muted:#9db3c7; --line:#24425e;
+    --blue:#5db0ff; --blue-d:#8cc8ff; --blue-l:#173753; --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg1:#0b1b2c; --bg2:#10263b; --surface:#12293fcc; --solid:#12293f;
+  --ink:#e6f1fb; --muted:#9db3c7; --line:#24425e;
+  --blue:#5db0ff; --blue-d:#8cc8ff; --blue-l:#173753; --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;margin:0}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font-family:var(--body);color:var(--ink);line-height:1.6;min-height:100vh;
+  background:linear-gradient(160deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg1) 100%);background-attachment:fixed}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px clamp(16px,4vw,40px);flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--blue-d));display:grid;place-items:center;color:#fff}
+.brand b{display:block;font-size:15px}.brand small{color:var(--muted);font-size:12px}
+.right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#clock{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.icon-btn{border:1px solid var(--line);background:var(--solid);border-radius:10px;padding:8px 12px;font-size:13px}
+.badge{background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;font-weight:700;font-size:14px;padding:8px 18px;border-radius:999px;box-shadow:0 6px 16px rgba(21,102,184,.35)}
+
+.grid{display:grid;grid-template-columns:260px minmax(0,1fr) 300px;gap:22px;padding:8px clamp(16px,4vw,40px) 40px;max-width:1400px;margin:auto;align-items:start}
+.panel{background:var(--surface);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:22px}
+.panel h2{font-size:15px;margin-bottom:4px}
+.panel .sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+
+/* left */
+.contact-btn{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:var(--solid);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:10px;transition:transform .15s,border-color .15s,background .15s}
+.contact-btn:hover{border-color:var(--blue);transform:translateX(3px);background:var(--blue-l)}
+.contact-btn .ic{width:36px;height:36px;border-radius:10px;background:var(--blue-l);color:var(--blue-d);display:grid;place-items:center;flex:none}
+.contact-btn b{display:block;font-size:14px}.contact-btn small{color:var(--muted);font-size:12px}
+.status{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--blue-l);font-size:13px;display:flex;gap:10px;align-items:center}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(31,157,107,.2)}
+
+/* center */
+.hero{display:flex;gap:20px;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.avatar{width:96px;height:96px;border-radius:26px;background:linear-gradient(135deg,var(--blue),#8fd0ff);color:#fff;display:grid;place-items:center;font-family:var(--display);font-size:38px;font-weight:700;box-shadow:0 10px 24px rgba(47,143,232,.4)}
+h1{font-family:var(--display);font-size:clamp(28px,4vw,40px);line-height:1.1}
+.role{color:var(--blue-d);font-weight:600;margin-top:4px}
+.unis{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chip{font-size:12px;padding:5px 12px;border-radius:999px;background:var(--blue-l);color:var(--blue-d);font-weight:600}
+.bio{margin:20px 0;text-align:justify;hyphens:auto;max-width:75ch;font-size:15px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
+.stat{background:var(--solid);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+.stat b{display:block;font-family:var(--display);font-size:26px;color:var(--blue-d)}.stat span{font-size:12px;color:var(--muted)}
+h3{font-size:14px;margin-bottom:10px}
+.bars{display:grid;gap:10px;margin-bottom:22px}
+.bar label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.track{height:8px;border-radius:99px;background:var(--blue-l);overflow:hidden}
+.fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--blue-d));transition:width 1s ease}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{border:1px solid var(--line);background:var(--solid);padding:7px 14px;border-radius:10px;font-size:13px;font-weight:600}
+.tab[aria-selected="true"]{background:var(--blue);color:#fff;border-color:var(--blue)}
+.pub{list-style:none;padding:0;display:grid;gap:8px}
+.pub li{background:var(--solid);border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:10px;padding:10px 14px;font-size:13.5px}
+.pub small{display:block;color:var(--muted)}
+
+/* right */
+.inst p{font-size:14px;margin-bottom:12px;text-align:justify}
+.facts{list-style:none;padding:0;display:grid;gap:8px;margin-top:6px}
+.facts li{font-size:13px;padding:9px 12px;border-radius:10px;background:var(--blue-l)}
+.qa{margin-top:22px}
+details{background:var(--solid);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:8px;font-size:13.5px}
+summary{cursor:pointer;font-weight:600}
+details p{margin-top:8px;color:var(--muted)}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(8,28,48,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+.overlay.open{display:flex}
+.modal{width:min(420px,100%);background:var(--solid);border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 24px 60px rgba(0,0,0,.35);animation:pop .22s ease}
+@keyframes pop{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+.modal h4{font-family:var(--display);font-size:22px;margin-bottom:6px}
+.modal .val{margin:14px 0 20px;padding:16px;border-radius:14px;background:var(--blue-l);font-size:20px;font-weight:700;text-align:center;word-break:break-all}
+.row{display:flex;gap:10px;justify-content:flex-end}
+.btn{border:1px solid var(--line);background:var(--solid);padding:9px 18px;border-radius:10px;font-weight:600;font-size:14px}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:var(--ink);color:var(--bg2);padding:10px 18px;border-radius:999px;font-size:13px;opacity:0;transition:.25s;z-index:60;pointer-events:none}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:1050px){.grid{grid-template-columns:1fr 1fr}.center{grid-column:1/-1;order:-1}}
+@media(max-width:680px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <div class="logo" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div>
+    <div><b>WebGIS Development Course</b></div>
+  </div>
+  <div class="right">
+    <span id="clock" aria-live="off"></span>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">Dark mode</button>
+    <span class="badge">Lab 2</span>
+  </div>
+</header>
+
+<main class="grid">
+  <!-- LEFT -->
+  <aside class="panel" aria-label="Quick contact">
+    <h2>Quick connect</h2>
+    <p class="sub">Select an option to view details</p>
+    <button class="contact-btn" onclick="showPopup('email')">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+      <span><b>Email</b><small>View email address</small></span>
+    </button>
+    <button class="contact-btn" onclick="showPopup('phone')">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span>
+      <span><b>Phone number</b><small>View contact number</small></span>
+    </button>
+    <button class="contact-btn" onclick="showPopup('more')">
+      <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg></span>
+      <span><b>More info</b><small>Additional details</small></span>
+    </button>
+    <div class="status"><span class="dot"></span><span id="visits">Welcome</span></div>
+  </aside>
+
+  <!-- CENTER -->
+  <section class="panel center" aria-label="Academic profile">
+    <div class="hero">
+      <div class="avatar" id="avatar" aria-hidden="true">YN</div>
+      <div>
+        <h1 id="name">Arooj Fatima (24-Arid-2203)</h1>
+        <div class="role" id="role">BS-Geo Informatics</div>
+        <div class="unis" id="unis"></div>
+      </div>
+    </div>
+    <p class="bio" id="bio"></p>
+    <div class="stats" id="stats"></div>
+    <h3>Core expertise</h3>
+    <div class="bars" id="bars"></div>
+    <h3>Research output</h3>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-t="pub">Published</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="sub">Submitted</button>
+    </div>
+    <ul class="pub" id="pubList"></ul>
+  </section>
+
+  <!-- RIGHT -->
+  <aside class="panel inst" aria-label="About institute">
+    <h2>About the institute</h2>
+    <p class="sub">Institute of Geo-Information &amp; Earth Observation</p>
+    <p>The Institute of Geo-Information and Earth Observation (IGEO) is an academic and research institution dedicated to the science and application of geospatial technologies. It integrates remote sensing, geographic information systems and spatial data science to address problems in agriculture, environment, urban growth and natural-resource management.</p>
+    <p>Through rigorous coursework, field-based research and collaboration with industry and government, the institute prepares graduates to turn Earth observation data into reliable decisions for sustainable development.</p>
+    <ul class="facts">
+      <li>Remote sensing and image analysis</li>
+      <li>GIS, WebGIS and spatial databases</li>
+      <li>Climate, land-use and crop monitoring</li>
+      <li>Applied research and professional training</li>
+    </ul>
+    <div class="qa">
+      <h2>Lab questions</h2>
+      <p class="sub">Answers for your submission</p>
+      <details><summary>1. Purpose of CSS gradients</summary><p>Gradients blend two or more colors smoothly, giving the background depth and a modern look without image files. Here they create the light blue to white theme, separate the page from the content cards and keep it fast to load.</p></details>
+      <details><summary>2. Making items clickable</summary><p>The &lt;button&gt; element with an onclick attribute makes the contact items clickable and keyboard accessible. For real links, the &lt;a&gt; element with href is used, such as href="mailto:name@example.com".</p></details>
+      <details><summary>3. Why showPopup and closePopup</summary><p>JavaScript responds to user actions. showPopup() fills the modal with the right content and makes it visible; closePopup() hides it again. This makes the page interactive without reloading and lets one modal serve many buttons.</p></details>
+      <details><summary>4. Three-column layout</summary><p>It groups related content into clear zones: contact on the left, profile in the center and institute on the right. This creates visual balance, a natural reading flow, a clear hierarchy and an easy responsive stack on small screens.</p></details>
+      <details><summary>5. Benefit of modal popups</summary><p>Modals keep the main page clean and focused by showing secondary details only when needed. They save space, draw attention to one piece of information at a time and avoid navigating to another page.</p></details>
+    </div>
+  </aside>
+</main>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal">
+    <h4 id="mTitle"></h4>
+    <p id="mSub" style="color:var(--muted);font-size:14px"></p>
+    <div class="val" id="mVal"></div>
+    <div class="row">
+      <button class="btn" id="copyBtn" style="display:none">Copy email</button>
+      <button class="btn primary" id="closeBtn" onclick="closePopup()">Close</button>
+    </div>
+  </div>
+</div>
+<div id="toast" role="status"></div>
+
+<script>
+/* ===== EDIT YOUR DETAILS HERE ===== */
+var PROFILE = {
+  name: "Arooj Fatima (24-Arid-2203)",
+  role: "BS-Geo Informatics",
+  universities: ["PMAS-Arid Agriculture University, Rawalpindi", "Your Second University"],
+  email: "yourname@example.com",
+  phone: "Nil",
+  more: "Nil",
+  bio: "I am a PhD scholar in Geo-Information Science with a strong foundation in remote sensing, geographic information systems and spatial data analysis. My academic journey began with a degree in Geography and progressed to postgraduate research on land-use change and crop monitoring using multi-temporal satellite imagery. I currently serve as a visiting lecturer, where I teach WebGIS development, spatial analysis and cartographic design to undergraduate and graduate students. My research combines Sentinel and Landsat data with machine learning to extract reliable information about vegetation, climate and urban growth. I have published peer-reviewed papers in recognized journals and have further manuscripts currently under review. My technical expertise covers Python, Google Earth Engine, QGIS, PostGIS, Leaflet and OpenLayers. I am committed to bridging academic research and practical decision-making through open, reproducible geospatial workflows.",
+  stats: [["3","Published papers"],["2","Submitted papers"],["4+","Years teaching"],["10+","Projects"]],
+  skills: [["Remote sensing",92],["GIS & spatial analysis",88],["WebGIS development",85],["Machine learning",72]],
+  pubs: {
+    pub: [["Crop mapping using multi-temporal Sentinel-2 imagery","Journal name, 2025"],["Land-use change detection with Landsat time series","Journal name, 2024"],["Urban heat patterns and vegetation cover","Journal name, 2023"]],
+    sub: [["Deep learning for field-boundary extraction","Under review"],["Web-based dashboard for drought monitoring","Submitted, 2026"]]
+  }
+};
+/* =================================== */
+
+var $ = function(id){return document.getElementById(id)};
+var lastFocus = null;
+
+function showPopup(type){
+  var c = {
+    email:{t:"Email address", s:"You can reach me at:", v:PROFILE.email},
+    phone:{t:"Phone number", s:"Contact number:", v:PROFILE.phone},
+    more:{t:"More information", s:"Additional details:", v:PROFILE.more}
+  }[type];
+  $("mTitle").textContent = c.t; $("mSub").textContent = c.s; $("mVal").textContent = c.v;
+  $("copyBtn").style.display = (type === "email") ? "inline-block" : "none";
+  lastFocus = document.activeElement;
+  $("overlay").classList.add("open");
+  $("closeBtn").focus();
+}
+function closePopup(){
+  $("overlay").classList.remove("open");
+  if(lastFocus) lastFocus.focus();
+}
+function toast(msg){
+  var t = $("toast"); t.textContent = msg; t.classList.add("show");
+  setTimeout(function(){t.classList.remove("show")}, 1800);
+}
+$("overlay").addEventListener("click", function(e){ if(e.target === this) closePopup(); });
+document.addEventListener("keydown", function(e){ if(e.key === "Escape") closePopup(); });
+$("copyBtn").addEventListener("click", function(){
+  try{ navigator.clipboard.writeText(PROFILE.email).then(function(){toast("Email copied")}, function(){toast("Copy not allowed here")}); }
+  catch(err){ toast("Copy not allowed here"); }
+});
+
+/* render profile */
+$("name").textContent = PROFILE.name;
+$("role").textContent = PROFILE.role;
+$("bio").textContent = PROFILE.bio;
+$("avatar").textContent = PROFILE.name.split(" ").map(function(w){return w[0]}).slice(0,2).join("").toUpperCase();
+$("unis").innerHTML = PROFILE.universities.map(function(u){return '<span class="chip"></span>'}).join("");
+Array.prototype.forEach.call($("unis").children, function(el,i){ el.textContent = PROFILE.universities[i]; });
+$("stats").innerHTML = PROFILE.stats.map(function(s){return '<div class="stat"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>'}).join("");
+$("bars").innerHTML = PROFILE.skills.map(function(s){return '<div class="bar"><label><span>'+s[0]+'</span><span>'+s[1]+'%</span></label><div class="track"><div class="fill" data-w="'+s[1]+'"></div></div></div>'}).join("");
+setTimeout(function(){ Array.prototype.forEach.call(document.querySelectorAll(".fill"), function(f){ f.style.width = f.dataset.w + "%"; }); }, 200);
+
+function renderPubs(k){
+  $("pubList").innerHTML = PROFILE.pubs[k].map(function(p){return '<li>'+p[0]+'<small>'+p[1]+'</small></li>'}).join("");
+}
+renderPubs("pub");
+Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(tb){
+  tb.addEventListener("click", function(){
+    Array.prototype.forEach.call(document.querySelectorAll(".tab"), function(x){ x.setAttribute("aria-selected", x === tb ? "true" : "false"); });
+    renderPubs(tb.dataset.t);
+  });
+});
+
+/* clock + greeting */
+function tick(){
+  var d = new Date(), h = d.getHours();
+  $("clock").textContent = d.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"}) + " | " + d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  $("visits").textContent = (h<12?"Good morning":h<18?"Good afternoon":"Good evening") + ", welcome to my profile";
+}
+tick(); setInterval(tick, 30000);
+
+/* theme toggle */
+$("themeBtn").addEventListener("click", function(){
+  var r = document.documentElement;
+  var dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme = dark ? "light" : "dark";
+  this.textContent = dark ? "Dark mode" : "Light mode";
+  try{ localStorage.setItem("lab2-theme", r.dataset.theme); }catch(e){}
+});
+try{
+  var saved = localStorage.getItem("lab2-theme");
+  if(saved){ document.documentElement.dataset.theme = saved; $("themeBtn").textContent = saved === "dark" ? "Light mode" : "Dark mode"; }
+}catch(e){}
+</script>
+</body>
+</html>
